@@ -1,1 +1,3 @@
-SELECT * FROM Comment;
+SHOW TABLES;
+DESC Post;
+SELECT * FROM Post;

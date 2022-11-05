@@ -9,9 +9,9 @@ const app = fastify();
 const prisma = new PrismaClient();
 
 app.register(sensible);
+
 await app.register(cors, {
-  // origin: "http//localhost:3000",
-  origin: process.env.CLIENT_URL,
+  origin: process.env.REACT_APP_CLIENT_URL,
   credentials: true,
 });
 
@@ -32,4 +32,4 @@ async function commitToDB(promise) {
   return data;
 }
 
-app.listen({ port: process.env.PORT });
+app.listen({ port: process.env.REACT_APP_PORT });

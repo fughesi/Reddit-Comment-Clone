@@ -3,9 +3,20 @@ import { getPosts } from "../services/posts";
 
 export function PostList() {
   const [posts, setPosts] = useState([]);
+
   useEffect(() => {
-    getPosts(setPosts);
+    getPosts().then(setPosts);
   }, []);
 
-  return <div>{JSON.stringify(posts)}</div>;
+  return (
+    <>
+      {posts.map((i) => {
+        return (
+          <h1 key={i.id}>
+            <a href={`/posts/${i.id}`}>{i.title}</a>
+          </h1>
+        );
+      })}
+    </>
+  );
 }
