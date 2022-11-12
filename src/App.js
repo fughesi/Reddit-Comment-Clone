@@ -1,8 +1,9 @@
-import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
 import { PostList } from "./components/PostList";
 import { PostProvider } from "./contexts/PostContext";
 import { Post } from "./components/Post";
+import { Signature } from "./components/signature";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           }
         />
       </Routes>
+
+      {/* <Signature /> */}
     </div>
   );
 }

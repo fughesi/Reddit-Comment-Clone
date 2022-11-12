@@ -1,4 +1,3 @@
-import React from "react";
 import { makeRequest } from "./makeRequest";
 
 export function createComment({ postId, message, parentId }) {

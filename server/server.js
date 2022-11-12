@@ -12,6 +12,18 @@ const CURRENT_USER_ID = (
   await prisma.user.findFirst({ where: { name: "Steven" } })
 ).id;
 
+const COMMENT_SELECT_FIELDS = {
+  id: true,
+  message: true,
+  parentId: true,
+  user: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+};
+
 app.register(sensible);
 app.register(cookie, { secret: process.env.REACT_APP_COOKIE_SECRET });
 await app.register(cors, {
@@ -30,10 +42,11 @@ app.addHook("onRequest", (req, res, done) => {
 
 app.get("/posts", async (req, res) => {
   return await commitToDB(
-    prisma.post.findMany({
+    prisma.comment.findMany({
       select: {
         id: true,
-        title: true,
+        user: true,
+        message: true,
       },
     })
   );
@@ -50,18 +63,7 @@ app.get("/posts/:id", async (req, res) => {
           orderBy: {
             createdAt: "desc",
           },
-          select: {
-            id: true,
-            message: true,
-            parentId: true,
-            createdAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
+          select: COMMENT_SELECT_FIELDS,
         },
       },
     })
@@ -81,6 +83,7 @@ app.post("/posts/:id/comments", async (req, res) => {
         parentId: req.body.parentId,
         postId: req.params.id,
       },
+      select: COMMENT_SELECT_FIELDS,
     })
   );
 });
