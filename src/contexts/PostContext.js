@@ -14,9 +14,7 @@ export function PostProvider({ children }) {
   const { loading, error, value: post } = useAsync(() => getPost(id), [id]);
   const [comments, setComments] = useState([]);
 
-  console.log(comments);
   const commentsByParentId = useMemo(() => {
-    if (comments == null) return [];
     const group = {};
     comments.forEach((comment) => {
       group[comment.parentId] ||= [];
@@ -41,6 +39,24 @@ export function PostProvider({ children }) {
     });
   }
 
+  function updateLocalComment(id, message) {
+    setComments((prev) => {
+      return prev.map((i) => {
+        if (i.id === id) {
+          return { ...i, message };
+        } else {
+          return i;
+        }
+      });
+    });
+  }
+
+  function deleteLocalComment(id) {
+    setComments((prev) => {
+      return prev.filter((i) => i.id !== id);
+    });
+  }
+
   return (
     <Context.Provider
       value={{
@@ -48,6 +64,8 @@ export function PostProvider({ children }) {
         rootComments: commentsByParentId[null],
         getReplies,
         createLocalComment,
+        updateLocalComment,
+        deleteLocalComment,
       }}
     >
       {loading ? (
