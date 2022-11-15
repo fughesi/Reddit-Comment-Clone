@@ -10,6 +10,7 @@ import {
   createComment,
   updateComment,
   deleteComment,
+  toggleCommentLike,
 } from "../services/comments";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -34,11 +35,13 @@ export function Comment({
     createLocalComment,
     updateLocalComment,
     deleteLocalComment,
+    toggleLocalCommentLike,
   } = usePost();
 
   const createCommentFn = useAsyncFn(createComment);
   const updateCommentFn = useAsyncFn(updateComment);
   const deleteCommentFn = useAsyncFn(deleteComment);
+  const toggleCommentLikeFn = useAsyncFn(toggleCommentLike);
   const childComments = getReplies(id);
   const currentUser = useUser();
 
@@ -66,6 +69,12 @@ export function Comment({
       .then((comment) => deleteLocalComment(comment.id));
   }
 
+  function onToggleCommentLike() {
+    return toggleCommentLikeFn
+      .execute({ id, postId: post.id })
+      .then(({ addLike }) => toggleLocalCommentLike(id, addLike));
+  }
+
   return (
     <>
       <div className="comment">
@@ -89,6 +98,8 @@ export function Comment({
         )}
         <div className="footer">
           <IconBtn
+            onClick={onToggleCommentLike}
+            disabled={toggleCommentLikeFn.loading}
             Icon={likedByMe ? FaHeart : FaRegHeart}
             aria-label={likedByMe ? "Unlike" : "Like"}
           >

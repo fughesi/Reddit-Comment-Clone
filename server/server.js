@@ -136,6 +136,7 @@ app.put("/posts/:postId/comments/:commentId", async (req, res) => {
       )
     );
   }
+
   return await commitToDB(
     prisma.comment.update({
       where: { id: req.params.commentId },
@@ -163,6 +164,29 @@ app.delete("/posts/:postId/comments/:commentId", async (req, res) => {
       select: { id: true },
     })
   );
+});
+
+app.post("/posts/:postId/comments/:commentId/toggleLike", async (req, res) => {
+  const data = {
+    commentId: req.params.commentId,
+    userId: req.cookies.userId,
+  };
+
+  const like = await prisma.like.findUnique({
+    where: { userId_commentId: data },
+  });
+
+  if (like == null) {
+    return await commitToDB(prisma.like.create({ data })).then(() => {
+      return { addLike: true };
+    });
+  } else {
+    return await commitToDB(
+      prisma.like.delete({ where: { userId_commentId: data } })
+    ).then(() => {
+      return { addLike: false };
+    });
+  }
 });
 
 async function commitToDB(promise) {
